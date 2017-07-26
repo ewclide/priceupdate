@@ -25,12 +25,26 @@
                     if (price) return parseFloat(price);
                     else return 0;
                 })();
+            checkChoosen(this.type);
             this.elem.on("change", function(){
                 if (self.type == "select") getSelectData();
                 self.parent.recalc(self);
             })
         }
         else console.error("calcPrice target option reference to undefined element");
+
+        function checkChoosen(type)
+        {
+            if (type == "select")
+            {
+                getSelectData();
+                if (self.price) self.parent.recalc(self);
+            }
+            else if (type == "radio" || type == "checkbox")
+            {
+                if (self.elem.attr("checked")) self.parent.recalc(self);
+            }
+        }
 
         function getSelectData()
         {
@@ -105,7 +119,6 @@
             {
                 case "+"  : update += option.price; break;
                 case "-"  : update -= option.price; break;
-                //case "*"  : price *= option.price; break;
                 case "*"  :
                     if (option.calctype == "update") price *= option.price;
                     else if (option.calctype == "static")
@@ -114,7 +127,6 @@
                         update += this.price * option.price;
                     }
                     break;
-                //case "/"  : price /= option.price; break;
                 case "/"  :
                     if (option.calctype == "update") price /= option.price;
                     else if (option.calctype == "static")
@@ -123,12 +135,10 @@
                         update += this.price / option.price;
                     }
                     break;
-                //case "+%" : update += (this.price / 100) * option.price; break;
                 case "+%" :
                     if (option.calctype == "update") update += (update / 100) * option.price;
                     else if (option.calctype == "static") update += (this.price / 100) * option.price;
                     break;
-                //case "-%" : update -= (this.price / 100) * option.price; break;
                 case "-%" :
                     if (option.calctype == "update") update -= (update / 100) * option.price;
                     else if (option.calctype == "static") update -= (this.price / 100) * option.price;
