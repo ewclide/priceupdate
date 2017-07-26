@@ -148,7 +148,7 @@
         price += update;
         this.updatePrice = price;
         this.insertPrice(price);
-        if (this.old) this.old.text(this.factor * this.updatePrice + this.currency);
+        if (this.old) this.old.text(Math.round(this.factor * this.updatePrice) + this.currency);
     }
     Price.prototype.addToList = function(option)
     {
