@@ -18,10 +18,10 @@
         {
             this.name = this.elem.attr('name');
             this.type = this.elem.attr('type') || this.elem[0].nodeName.toLowerCase();
-            this.operator = this.elem.attr('data-operator') || "+";
-            this.calctype = this.elem.attr('data-calctype') || "update";
+            this.operator = this.elem.attr('data-price-operator') || "+";
+            this.calctype = this.elem.attr('data-price-calctype') || "update";
             this.price = (function(){
-                    var price = self.elem.attr('data-price');
+                    var price = self.elem.attr('data-price-value');
                     if (price) return parseFloat(price);
                     else return 0;
                 })();
@@ -49,9 +49,9 @@
         function getSelectData()
         {
             var option = self.elem.find('option:selected');
-            self.operator = option.attr('data-operator');
+            self.operator = option.attr('data-price-operator');
             self.price = options.price || (function(){
-                    var price = option.attr('data-price');
+                    var price = option.attr('data-price-value');
                     if (price) return parseFloat(price);
                     else return 0;
                 })();
@@ -64,7 +64,7 @@
         this.price = null;
         this.currency = null;
         this.updatePrice = null;
-        this.targets = null;
+        this.points = null;
         this.old = null;
         this.oldPrice = null;
         this.options = {};
@@ -77,25 +77,25 @@
         this.elem = options.elem;
         if (this.elem)
         {
-            this.price = parseFloat(this.elem.attr("data-price")) || 0;
-            this.currency = this.elem.attr('data-currency') || "";
+            this.price = parseFloat(this.elem.attr("data-price-value")) || 0;
+            this.currency = this.elem.attr('data-price-currency') || "";
             this.old = (function(){
-                    var old = self.elem.attr('data-old');
+                    var old = self.elem.attr('data-price-old');
                         old ? old = $(old) : old = false;
                     if (old) return old;
                     else return false;
                 })();
-            this.oldPrice = self.old ? parseFloat(self.old.attr("data-price")) || 0 : 0;
+            this.oldPrice = self.old ? parseFloat(self.old.attr("data-price-value")) || 0 : 0;
             this.factor = (function(){
                     if (self.old) return self.oldPrice / self.price;
                     else return 0;
                 })();
-            this.targets = (function(){
+            this.points = (function(){
                 var result = [];
-                var targets = self.elem.attr('data-targets') || false;
-                    targets ? targets = $("[data-point='" + targets + "']") : false;
-                if (targets)
-                targets.each(function(target){
+                var points = self.elem.attr('data-price-points') || false;
+                    points ? points = $("[data-price-target='" + points + "']") : false;
+                if (points)
+                points.each(function(point){
                     var option = new Option({
                         elem : $(this),
                         parent : self
