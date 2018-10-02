@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>PriceUpdater test</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+</head>
+<body>
+	<p id="old_price">7000 RUB</p>
+
+	<p
+		data-priceupdater
+		data-old-price="#old_price"
+		data-points="price"
+		data-value="5000"
+		data-old-value="7000"
+		data-currency=" RUB"
+		data-animation
+		data-on-change="console.log(e)"
+	>
+		5000 RUB
+	</p>
+
+	<span>via js:</span>
+	<p id="main">5000 RUB</p>
+	<p id="old"></p>
+
+	<div>
+		<div class="group">
+			<input type="checkbox" name="checkbox_1" 
+				data-target="price"
+				data-point
+				data-operator="+"
+				value="2000"
+			>
+			<label>+2000</label>
+			
+			<input type="checkbox" name="checkbox_2" 
+				data-target="price"
+				data-point
+				data-operator="-"
+				value="3000"
+			>
+			<label>-3000</label>
+			
+			<input type="checkbox" name="checkbox_3" 
+				data-target="price"
+				data-point
+				data-operator="+%"
+				value="10"
+			>
+			<label>+10%</label>
+
+			<input type="checkbox" name="checkbox_4" 
+				data-target="price"
+				data-point
+				data-operator="-%"
+				value="25"
+			>
+			<label>-25%</label>
+		</div>
+		<div class="group">
+			<input type="radio" name="radio" 
+				data-target="price"
+				data-point
+				data-operator="+"
+				value="3000"
+			>
+			<label>+3000</label>
+
+			
+			<input type="radio" name="radio" 
+				data-target="price"
+				data-point
+				data-operator="+"
+				value="1000"
+			>
+			<label>+1000</label>
+
+			
+			<input type="radio" name="radio" 
+				data-target="price"
+				data-point
+				data-operator="-"
+				value="2000"
+			>
+			<label>-2000</label>
+			
+		</div>
+		<div class="group">
+			<select name="select" data-target="price" data-point>
+				<option value="">не выбрано</option>
+				<option data-operator="+" value="1500">+ 1500</option>
+				<option data-operator="-" value="1000">- 1000</option>
+				<option data-operator="*" value="2">* 2</option>
+			</select>
+		</div>
+	</div>
+
+	<script src="/result/priceupdater.min.js"></script>
+	<script src="common.js"></script>
+</body>
+</html>
