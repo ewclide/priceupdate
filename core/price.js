@@ -5,21 +5,32 @@ import Animation from './anim';
 var defaults = {
     value     : 0,
     currency  : '$',
+    space     : false,
+    template  : null,
     points    : '',
     oldPrice  : false,
     oldValue  : 0,
     factor    : 0,
     animation : false,
-    duration  : 700,
+    duration  : 500,
     onChange  : null,
-    onReady   : null
+    onReady   : null,
+    onAnimUpdate : null
 }
 
 var attributes = {
-    oldPrice : "old-price",
-    oldValue : "old-value",
-    onChange : "on-change",
-    onReady  : "on-ready"
+    value     : 'value',
+    currency  : 'currency',
+    space     : 'space',
+    template  : 'template',
+    points    : 'points',
+    oldPrice  : 'old-price',
+    oldValue  : 'old-value',
+    factor    : 'factor',
+    animation : 'animation',
+    duration  : 'duration',
+    onChange  : 'on-change',
+    onReady   : 'on-ready',
 }
 
 export default class Price
@@ -29,17 +40,27 @@ export default class Price
         settings = fetchSettings(settings, defaults, attributes, source);
 
         this.element = source;
-        this.value = parseFloat(settings.value);
+        this.value = parseFloat(settings.value || source.innerText);
         this.currency = settings.currency;
+        this.space = settings.space ? ' ' : '';
+        this.template = settings.template;
         this.updatedValue = this.value;
         this.options = {};
         this.activeList = {};
+        this.onChange = getFunction(settings.onChange);
+        this.onReady  = getFunction(settings.onReady);
+        this.onAnimUpdate = getFunction(settings.onAnimUpdate);
 
         if (settings.animation)
             this.animation = new Animation({
                 timing   : getFunction(settings.timing),
                 duration : settings.duration,
-                onUpdate : (e) => this._insert(Math.round(e))
+                onUpdate : (e) => {
+                    this._insert(Math.round(e.value));
+
+                    if (typeof this.onAnimUpdate == 'function')
+                        this.onAnimUpdate(e);
+                }
             });
 
         this._getOldPrice(
@@ -50,8 +71,10 @@ export default class Price
 
         this._getOptions(settings.points);
 
-        this.onChange = getFunction(settings.onChange);
-        this.onReady  = getFunction(settings.onReady);
+        if (typeof this.onReady == 'function')
+            this.onReady(this);
+
+        this._insert(this.value);
     }
 
     _getOldPrice(query, oldValue, factor)
@@ -70,7 +93,6 @@ export default class Price
 
         else if (!factor && !oldValue) return;
 
-        oldElement.innerText = oldValue + this.currency;
         this.oldElement = oldElement;
         this.oldValue = oldValue;
         this.factor = factor;
@@ -87,7 +109,7 @@ export default class Price
             list = document.querySelectorAll(query);
 
         for (var i = 0; i < list.length; i++)
-            this.addOption(list[i]);
+            this.attachOption(list[i]);
     }
 
     _updateActiveList(option)
@@ -131,18 +153,38 @@ export default class Price
 
     _insert(price)
     {
-        this.element.value = price + this.currency;
-        this.element.innerText = price + this.currency;
+        var resPrice = this._draw(price);
+
+        this.element.value = resPrice;
+        this.element.innerHTML = resPrice;
 
         if (this.oldElement)
         {
             var oldValue = Math.round(this.factor * price);
-            this.oldElement.innerText = oldValue + this.currency;
+
+            resPrice = this._draw(oldValue);
+
+            this.oldElement.innerHTML = resPrice;
             this.oldValue = oldValue;
         }
     }
 
-    addOption(element, operator)
+    _draw(value)
+    {
+        var result = '';
+
+        if (this.template)
+        {
+            result = this.template;
+            result = result.replace(/\{value\}/gi, value);
+            result = result.replace(/\{currency\}/gi, this.currency);
+        }
+        else result = value + this.space + this.currency;
+        
+        return result;
+    }
+
+    attachOption(element, operator)
     {
         var self = this,
 

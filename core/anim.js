@@ -1,7 +1,3 @@
-function ease(v, pow = 4){
-    return 1 - Math.pow(1 - v, pow);
-}
-
 function linear(v){
     return v;
 }
@@ -11,7 +7,7 @@ export default class Animation
     constructor(settings)
     {
         this.timing = settings.timing || linear;
-        this.duration = settings.duration || 700;
+        this.duration = settings.duration || 500;
         this.onUpdate = settings.onUpdate;
         this.from = 0;
         this.to = 1;
@@ -42,7 +38,10 @@ export default class Animation
         progress = this.timing(fraction);
         value += progress * (this.to - this.from);
 
-        this.onUpdate(value);
+        this.onUpdate({
+            value    : value,
+            progress : progress
+        });
 
         if (!this._stopFlag)
             requestAnimationFrame(function(t){
